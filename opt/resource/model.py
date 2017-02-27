@@ -13,12 +13,16 @@ class Model:
         return version
 
     def get_slack_bot_token(self):
-        version = self.payload['params']['SLACK_BOT_TOKEN']
-        return version
+        token = self.payload['params']['SLACK_BOT_TOKEN']
+        return token
+
+    def get_slack_channel(self):
+        channel = self.payload['params']['channel']
+        return channel
 
     def get_directory(self):
-        version = self.payload['params']['directory']
-        return version
+        directory = self.payload['params']['directory']
+        return directory
 
     def get_version(self):
         version = self.payload['version']['version']
