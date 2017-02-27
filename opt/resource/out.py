@@ -19,8 +19,9 @@ def execute(filepath):
         if file.endswith(".html"):
 
             sc.api_call("files.upload", content=open(os.path.join(filepath, model.get_directory(), file)).read(),
-                        channels="bot-test", title=file + open(os.path.join(filepath, model.get_version_file())).read(),
-                        filename=file + open(os.path.join(filepath, model.get_version_file())).read())
+                        channels="bot-test",
+                        title=open(os.path.join(filepath, model.get_version_file())).read() + "-" + file,
+                        filename=open(os.path.join(filepath, model.get_version_file())).read() + "-" + file)
 
     common.log("uploaded file to slack")
 
