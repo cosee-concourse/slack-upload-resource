@@ -15,7 +15,7 @@ def execute(filepath):
 
     sc = SlackClient(model.get_slack_bot_token())
 
-    sc.api_call("chat.postMessage", token=model.get_slack_bot_token(),
+    sc.api_call("chat.postMessage", as_user=True,
                 channel=model.get_slack_channel(),
                 text="Here are the latest JUnit Test Reports:")
 
