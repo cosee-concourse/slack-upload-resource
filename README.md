@@ -22,7 +22,7 @@ Generates names for various services using a prefix and the current version.
 
 * *None.*
 
-### `out`: Upload artifacts as archive to the bucket.
+### `out`: Upload HTML files to Slack
 
 * Uses a provided Bot token to upload html reports to slack. To generate unique 
   filenames the [semver](http://semver.org/) version is used.
