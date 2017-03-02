@@ -12,6 +12,10 @@ class Model:
         version = self.payload['params']['version']
         return version
 
+    def get_command(self):
+        command = self.payload['params']['command']
+        return command
+
     def get_slack_bot_token(self):
         token = self.payload['params']['SLACK_BOT_TOKEN']
         return token
