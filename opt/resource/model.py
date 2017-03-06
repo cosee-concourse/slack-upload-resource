@@ -1,4 +1,4 @@
-from concourse_common import common
+from concourse_common import jsonutil
 
 VERSION_JSON_NAME = 'version'
 
@@ -6,7 +6,7 @@ VERSION_JSON_NAME = 'version'
 class Model:
 
     def __init__(self):
-        self.payload = common.load_payload()
+        self.payload = jsonutil.load_payload()
 
     def get_version_file(self):
         version = self.payload['params']['version']
