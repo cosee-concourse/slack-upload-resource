@@ -6,7 +6,7 @@ VERSION_JSON_NAME = 'version'
 class Model:
 
     def __init__(self):
-        self.payload = common.get_payload()
+        self.payload = common.load_payload()
 
     def get_version_file(self):
         version = self.payload['params']['version']
