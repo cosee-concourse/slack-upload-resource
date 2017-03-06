@@ -1,2 +1,2 @@
 slackclient==1.0.5
-flask==0.12
+git+https://github.com/cosee-concourse/concourse-common.git
