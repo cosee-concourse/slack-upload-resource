@@ -33,6 +33,10 @@ Generates names for various services using a prefix and the current version.
 * `directory`: *Required* Location of the html reports
 * `channel`: *Required* The channel to upload the files to
 * `SlACK_BOT_TOKEN`: *Required* Filepath to `semver` version file
+* `command`: *Required* The type of message slack is supposed to send. Valid Arguments are `success`, `failure` and
+  `report`.
+* `pipeline_step`: *Required if `command` is `failure`* The current step of the pipeline so that the slack message can
+   include at which stage of the pipeline the error occurred.
 
 
 ## Example Configuration
@@ -59,5 +63,16 @@ Generates names for various services using a prefix and the current version.
       version: version/number
       directory: junit
       SLACK_BOT_TOKEN: xoxb-1345678903412-xxxxxxxxxxxxxxxxxxxxxxxxx
-	  channel: bot-channel	
+      channel: bot-channel
+      command: report	
+```
+``` yaml
+  - put: slack
+    params: 
+      version: version/number
+      directory: junit
+      SLACK_BOT_TOKEN: xoxb-1345678903412-xxxxxxxxxxxxxxxxxxxxxxxxx
+      channel: bot-channel
+      command: failure
+      pipeline_step: build
 ```
