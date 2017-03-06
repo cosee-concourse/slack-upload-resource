@@ -24,6 +24,10 @@ class Model:
         channel = self.payload['params']['channel']
         return channel
 
+    def get_pipeline_step(self):
+        step = self.payload['params']['pipeline_step']
+        return step
+
     def get_directory(self):
         directory = self.payload['params']['directory']
         return directory

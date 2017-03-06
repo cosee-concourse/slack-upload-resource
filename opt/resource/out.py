@@ -57,26 +57,51 @@ def execute(filepath):
         if count["failures"] > 0:
 
             sc.api_call("chat.postMessage", as_user=True,
-                        channel=model.get_slack_channel(), attachments=[{"fallback": "Test Results",
-                                                                         "pretext": "Here are latest test results:",
-                                                                         "color": "danger",
-                                                                         "text": total_string,
-                                                                         "title": "Test Results",
-                                                                         "fields": [{"title": "Failures: ",
-                                                                                     "value": failed_string,
-                                                                                     "short": False}]}])
+                        channel=model.get_slack_channel(),
+                        attachments=[{"fallback": "Test Results",
+                                      "pretext": "Test results of " + model.get_pipeline_step() + " in version" + open(os.path.join(filepath, model.get_version_file())).read(),
+                                      "color": "danger",
+                                      "text": total_string,
+                                      "title": "Test Results",
+                                      "fields": [{"title": "Failures: ",
+                                                  "value": failed_string,
+                                                  "short": False}]}])
 
         else:
 
             sc.api_call("chat.postMessage", as_user=True,
-                        channel=model.get_slack_channel(), attachments=[{"fallback": "Test Results",
-                                                                         "pretext": "Here are latest test results:",
-                                                                         "color": "good",
-                                                                         "title": "Test Results: ",
-                                                                         "fields": [{"value": total_string,
-                                                                                     "short": False}]}])
+                        channel=model.get_slack_channel(),
+                        attachments=[{"fallback": "Test Results",
+                                      "pretext": "Test results of " + model.get_pipeline_step() + " in version" + open(os.path.join(filepath, model.get_version_file())).read(),
+                                      "color": "good",
+                                      "title": "Test Results: ",
+                                      "fields": [{"value": total_string,
+                                                  "short": False}]}])
 
     common.log("uploaded file to slack")
+
+    if model.get_command() == "failure":
+
+        sc.api_call("chat.postMessage", as_user=True,
+                    channel=model.get_slack_channel(),
+                    attachments=[{"fallback": "Pipeline Failure in " + model.get_pipeline_step(),
+                                  "pretext": "Pipeline Failure",
+                                  "color": "danger",
+                                  "title": "Failure:",
+                                  "fields": [{"value": model.get_pipeline_step() + " in version " + open(os.path.join(filepath, model.get_version_file())).read() + "failed",
+                                              "short": False}]}])
+
+    if model.get_command() == "success":
+
+        sc.api_call("chat.postMessage", as_user=True,
+                    channel=model.get_slack_channel(),
+                    attachments=[{"fallback": "Pipeline Success of version" + open(os.path.join(filepath, model.get_version_file())).read(),
+                                  "pretext": "Pipeline Success",
+                                  "color": "good",
+                                  "title": "Success:",
+                                  "fields": [
+                                      {"value": "Version " + open(os.path.join(filepath, model.get_version_file())).read() + " successfully finished the Pipeline",
+                                       "short": False}]}])
 
     print(json.dumps({"version": {"version": open(os.path.join(filepath, model.get_version_file())).read()}}))
 
