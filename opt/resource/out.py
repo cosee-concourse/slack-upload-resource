@@ -5,6 +5,62 @@ from model import Model
 from slackclient import SlackClient
 import os
 import xml.etree.ElementTree
+import slack_post
+
+
+def execute(filepath):
+
+    try:
+        model = Model()
+    except:
+        return -1
+
+    sc = SlackClient(model.get_slack_bot_token())
+
+    if model.get_command() == "failure":
+        slack_post.post_failure_message(filepath, model, sc)
+
+    if model.get_command() == "success":
+        slack_post.post_success_message(filepath, model, sc)
+
+    if model.get_command() == "report":
+
+        count = {"tests": 0, "errors": 0, "skipped": 0, "failures": 0}
+        failed = {}
+        for file in os.listdir(os.path.join(filepath, model.get_directory())):
+            if file.endswith(".xml"):
+                current_file = os.path.join(filepath, model.get_directory(), file)
+                root = xml.etree.ElementTree.parse(current_file).getroot()
+                for key in count.keys():
+                    count[key] += int(root.attrib[key])
+
+                extract_failed_tests(failed, root)
+
+        total_string = build_total_string(count)
+        common.log(total_string)
+        failed_string = list_tests(failed)
+        common.log(failed_string)
+
+        if count["failures"] > 0:
+
+            slack_post.post_failed_tests(failed_string, filepath, model, sc, total_string)
+
+        else:
+
+            slack_post.post_successful_tests(filepath, model, sc, total_string)
+
+    print(json.dumps({"version": {"version": open(os.path.join(filepath, model.get_version_file())).read()}}))
+
+    return 0
+
+
+def extract_failed_tests(failed, root):
+    for testcase in root.findall("testcase"):
+        for child in testcase:
+            common.log(child.tag)
+            if child.tag == "failure":
+                failed[testcase.attrib["name"]] = testcase.attrib["classname"]
+                common.log(testcase.attrib["name"] + " in " + testcase.attrib["classname"])
 
 
 def build_total_string(dict):
@@ -20,93 +76,6 @@ def list_tests(dict):
     for key in dict:
         result = result + key + " in " + dict[key] + "\n\n"
     return result
-
-
-def execute(filepath):
-
-    try:
-        model = Model()
-    except:
-        return -1
-
-    sc = SlackClient(model.get_slack_bot_token())
-
-    if model.get_command() == "report":
-
-        count = {"tests": 0, "errors": 0, "skipped": 0, "failures": 0}
-        failed = {}
-        for file in os.listdir(os.path.join(filepath, model.get_directory())):
-            if file.endswith(".xml"):
-                current_file = os.path.join(filepath, model.get_directory(), file)
-                root = xml.etree.ElementTree.parse(current_file).getroot()
-                for key in count.keys():
-                    count[key] += int(root.attrib[key])
-
-                for testcase in root.findall("testcase"):
-                    for child in testcase:
-                        common.log(child.tag)
-                        if child.tag == "failure":
-                            failed[testcase.attrib["name"]] = testcase.attrib["classname"]
-                            common.log(testcase.attrib["name"] + " in " + testcase.attrib["classname"])
-
-        total_string = build_total_string(count)
-        common.log(total_string)
-        failed_string = list_tests(failed)
-        common.log(failed_string)
-
-        if count["failures"] > 0:
-
-            sc.api_call("chat.postMessage", as_user=True,
-                        channel=model.get_slack_channel(),
-                        attachments=[{"fallback": "Test Results",
-                                      "pretext": "Test results of " + model.get_pipeline_step() + " in version " + open(os.path.join(filepath, model.get_version_file())).read(),
-                                      "color": "danger",
-                                      "text": total_string,
-                                      "title": "Test Results",
-                                      "fields": [{"title": "Failures: ",
-                                                  "value": failed_string,
-                                                  "short": False}]}])
-
-        else:
-
-            sc.api_call("chat.postMessage", as_user=True,
-                        channel=model.get_slack_channel(),
-                        attachments=[{"fallback": "Test Results",
-                                      "pretext": "Test results of " + model.get_pipeline_step() + " in version " + open(os.path.join(filepath, model.get_version_file())).read(),
-                                      "color": "good",
-                                      "title": "Test Results: ",
-                                      "fields": [{"value": total_string,
-                                                  "short": False}]}])
-
-    common.log("uploaded file to slack")
-
-    if model.get_command() == "failure":
-
-        sc.api_call("chat.postMessage", as_user=True,
-                    channel=model.get_slack_channel(),
-                    attachments=[{"fallback": "Pipeline Failure in " + model.get_pipeline_step(),
-                                  "pretext": "Pipeline Failure",
-                                  "color": "danger",
-                                  "title": "Failure:",
-                                  "fields": [{"value": model.get_pipeline_step() + " in version " + open(os.path.join(filepath, model.get_version_file())).read() + "failed",
-                                              "short": False}]}])
-
-    if model.get_command() == "success":
-
-        sc.api_call("chat.postMessage", as_user=True,
-                    channel=model.get_slack_channel(),
-                    attachments=[{"fallback": "Pipeline Success of version" + open(os.path.join(filepath, model.get_version_file())).read(),
-                                  "pretext": "Pipeline Success",
-                                  "color": "good",
-                                  "title": "Success:",
-                                  "fields": [
-                                      {"value": "Version " + open(os.path.join(filepath, model.get_version_file())).read() + " successfully finished the Pipeline",
-                                       "short": False}]}])
-
-    print(json.dumps({"version": {"version": open(os.path.join(filepath, model.get_version_file())).read()}}))
-
-    return 0
-
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
