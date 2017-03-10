@@ -17,7 +17,7 @@ class Model:
         return command
 
     def get_slack_bot_token(self):
-        token = self.payload['params']['SLACK_BOT_TOKEN']
+        token = self.payload['source']['SLACK_BOT_TOKEN']
         return token
 
     def get_slack_channel(self):
