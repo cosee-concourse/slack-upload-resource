@@ -1,35 +1,40 @@
 import sys
 from concourse_common import common
+from concourse_common import jsonutil
+from concourse_common import request
 import json
-from model import Model
 from slackclient import SlackClient
 import os
 import xml.etree.ElementTree
 import slack_post
+import schemas
 
 
 def execute(filepath):
 
-    try:
-        model = Model()
-    except:
+    valid, payload = jsonutil.load_and_validate_payload(schemas, request.Request.OUT)
+
+    if valid is False:
         return -1
 
-    sc = SlackClient(model.get_slack_bot_token())
+    command = jsonutil.get_params_value(payload, "command")
+    directory = jsonutil.get_params_value(payload, "directory")
 
-    if model.get_command() == "failure":
-        slack_post.post_failure_message(filepath, model, sc)
+    sc = SlackClient(jsonutil.get_source_value(payload, "SLACK_BOT_TOKEN"))
 
-    if model.get_command() == "success":
-        slack_post.post_success_message(filepath, model, sc)
+    if command == "failure":
+        slack_post.post_failure_message(filepath, payload, sc)
 
-    if model.get_command() == "report":
+    if command == "success":
+        slack_post.post_success_message(filepath, payload, sc)
+
+    if command == "report":
 
         count = {"tests": 0, "errors": 0, "skipped": 0, "failures": 0}
         failed = {}
-        for file in os.listdir(os.path.join(filepath, model.get_directory())):
+        for file in os.listdir(os.path.join(filepath, directory)):
             if file.endswith(".xml"):
-                current_file = os.path.join(filepath, model.get_directory(), file)
+                current_file = os.path.join(filepath, directory, file)
                 root = xml.etree.ElementTree.parse(current_file).getroot()
                 for key in count.keys():
                     count[key] += int(root.attrib[key])
@@ -43,13 +48,13 @@ def execute(filepath):
 
         if count["failures"] > 0:
 
-            slack_post.post_failed_tests(failed_string, filepath, model, sc, total_string)
+            slack_post.post_failed_tests(failed_string, filepath, payload, sc, total_string)
 
         else:
 
-            slack_post.post_successful_tests(filepath, model, sc, total_string)
+            slack_post.post_successful_tests(filepath, payload, sc, total_string)
 
-    print(json.dumps({"version": {"version": open(os.path.join(filepath, model.get_version_file())).read()}}))
+    print(json.dumps({"version": {"version": open(os.path.join(filepath, jsonutil.get_params_value(payload, "version"))).read()}}))
 
     return 0
 
