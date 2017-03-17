@@ -8,7 +8,7 @@ import schemas
 
 def execute():
 
-    valid, payload = jsonutil.load_and_validate_payload(schemas, request.Request.OUT)
+    valid, payload = jsonutil.load_and_validate_payload(schemas, request.Request.IN)
 
     if valid is False:
         return -1
