@@ -35,7 +35,7 @@ def execute(filepath):
         for root, dirs, files in os.walk(os.path.join(filepath, directory)):
             for name in files:
                 if name.startswith("TEST") and name.endswith(".xml"):
-                    current_file = os.path.join(filepath, directory, name)
+                    current_file = os.path.join(filepath, directory, dirs, name)
                     root = xml.etree.ElementTree.parse(current_file).getroot()
                     for key in count.keys():
                         count[key] += int(root.attrib[key])
