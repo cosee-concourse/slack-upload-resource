@@ -1,17 +1,19 @@
 import sys
 from concourse_common import common
+from concourse_common import jsonutil
+from concourse_common import request
 import json
-from model import Model
+import schemas
 
 
 def execute():
 
-    try:
-        model = Model()
-    except:
+    valid, payload = jsonutil.load_and_validate_payload(schemas, request.Request.OUT)
+
+    if valid is False:
         return -1
 
-    print(json.dumps({"version": {"version": model.get_version()}}))
+    print(json.dumps({"version": {"version": jsonutil.get_version(payload, "version")}}))
 
     return 0
 

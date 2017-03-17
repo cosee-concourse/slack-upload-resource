@@ -33,7 +33,7 @@ def execute(filepath):
         count = {"tests": 0, "errors": 0, "skipped": 0, "failures": 0}
         failed = {}
         for file in os.listdir(os.path.join(filepath, directory)):
-            if file.endswith(".xml"):
+            if file.startswith("TEST") and file.startswith(".xml"):
                 current_file = os.path.join(filepath, directory, file)
                 root = xml.etree.ElementTree.parse(current_file).getroot()
                 for key in count.keys():
