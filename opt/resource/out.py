@@ -55,7 +55,8 @@ def execute(filepath):
 
             slack_post.post_successful_tests(filepath, payload, sc, total_string)
 
-    print(json.dumps({"version": {"version": open(os.path.join(filepath, jsonutil.get_params_value(payload, "version"))).read()}}))
+    print(json.dumps({"version": {"version": open(os.path.join(filepath,
+                                                    jsonutil.get_params_value(payload, "version"))).read()}}))
 
     return 0
 
