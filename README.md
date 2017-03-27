@@ -15,15 +15,6 @@ Generates names for various services using a prefix and the current version.
 * Posts a message to slack based on the command provided. To give better information on the state of the pipeline 
   the [semver](http://semver.org/) version is used.
   
-### `check`: no-op
-
-* Since this resource does not have a version itself `check` returns an empty JSON.
-
-### `in`: no-op
-
-* Simply returns the provided version
-
-
 #### Parameters
  
 * `version`: *Required* Filepath to `semver` version file
@@ -31,7 +22,14 @@ Generates names for various services using a prefix and the current version.
   `report`.
 * `directory`: *Required if command is `report`* Location of the html reports
 * `channel`: *Required* The channel for the message to appear in
+  
+### `check`: no-op
 
+* Since this resource does not have a version itself `check` returns an empty JSON.
+
+### `in`: no-op
+
+* Simply returns the provided version
 
 ## Example Configuration
 
@@ -67,5 +65,4 @@ Generates names for various services using a prefix and the current version.
       version: version/number
       command: failure
       channel: bot-channel
-      pipeline_step: build
 ```
