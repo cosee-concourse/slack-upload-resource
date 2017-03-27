@@ -54,15 +54,11 @@ out_schema = {
                     "channel": {
                         "type": "string"
                     },
-                    "pipeline_step": {
-                        "type": "string"
-                    },
                 },
                 "required": [
                   "version",
                   "command",
                   "channel",
-                  "pipeline_step"
                 ]},
                 {"properties": {
                     "version": {
@@ -78,16 +74,12 @@ out_schema = {
                     "channel": {
                         "type": "string"
                     },
-                    "pipeline_step": {
-                        "type": "string"
-                    },
                 },
                 "required": [
                   "version",
                   "command",
                   "channel",
                   "directory",
-                  "pipeline_step"
                 ]}],
                 "additionalProperties": "false"
         }

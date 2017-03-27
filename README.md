@@ -31,8 +31,6 @@ Generates names for various services using a prefix and the current version.
   `report`.
 * `directory`: *Required if command is `report`* Location of the html reports
 * `channel`: *Required* The channel for the message to appear in
-* `pipeline_step`: *Required* The current step of the pipeline so that the slack message can
-   include at which stage of the pipeline the error occurred.
 
 
 ## Example Configuration
