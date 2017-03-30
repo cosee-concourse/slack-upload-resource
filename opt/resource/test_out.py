@@ -14,6 +14,25 @@ class TestOutput(unittest.TestCase):
                                                                                          "directory": "1.1.0"}}))
         self.assertEquals(out.execute("/"), -1)
 
+    def test_json_output_no_source(self):
+        testutil.put_stdin(json.dumps({ "params": {"version": "1.1.0",
+                                                         "command": "1.1.0",
+                                                         "channel": "reports",
+                                                         "directory": "1.1.0"}}))
+        self.assertEquals(out.execute("/"), -1)
+
+    def test_json_output_no_directory(self):
+        testutil.put_stdin(json.dumps({"source": {"SLACK_BOT_TOKEN": "test"}, "params": {"version": "1.1.0",
+                                                                                         "command": "1.1.0",
+                                                                                         "channel": "reports"}}))
+        self.assertEquals(out.execute("/"), -1)
+
+    def test_json_output_missing_version(self):
+        testutil.put_stdin(json.dumps({"source": {"SLACK_BOT_TOKEN": "test"}, "params": {"command": "1.1.0",
+                                                                                         "channel": "reports",
+                                                                                         "directory": "1.1.0"}}))
+        self.assertEquals(out.execute("/"), -1)
+
     @patch("out.open")
     @patch("out.json")
     @patch("out.slack_post")
