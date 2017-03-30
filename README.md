@@ -1,5 +1,6 @@
 # Slack Upload Resource
  
+[![Build Status](https://travis-ci.org/cosee-concourse/slack-upload-resource.svg?branch=master)](https://travis-ci.org/cosee-concourse/slack-upload-resource) 
 [![Docker Repository on Quay](https://quay.io/repository/cosee-concourse/slack-upload-resource/status "Docker Repository on Quay")](https://quay.io/repository/cosee-concourse/slack-upload-resource)
 
 Generates names for various services using a prefix and the current version.
