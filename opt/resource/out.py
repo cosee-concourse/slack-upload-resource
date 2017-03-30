@@ -64,7 +64,6 @@ def execute(filepath):
 def extract_failed_tests(failed, root):
     for testcase in root.findall("testcase"):
         for child in testcase:
-            common.log(child.tag)
             if child.tag == "failure":
                 failed[testcase.attrib["name"]] = testcase.attrib["classname"]
                 common.log(testcase.attrib["name"] + " in " + testcase.attrib["classname"])
